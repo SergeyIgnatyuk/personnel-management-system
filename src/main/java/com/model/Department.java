@@ -1,5 +1,6 @@
 package com.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,6 +43,7 @@ public class Department {
     private String phoneNumber;
     @Column(name = "date_of_formation")
     @NotNull(message = "Date of formation must be not empty")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateOfFormation;
     @OneToMany
     @JoinColumn(name = "department_id", nullable = false, insertable = false, updatable = false)
