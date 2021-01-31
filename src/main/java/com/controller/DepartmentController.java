@@ -4,14 +4,14 @@ import com.model.Department;
 import com.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
@@ -41,5 +41,19 @@ public class DepartmentController {
     @GetMapping("/{id}")
     public ResponseEntity<Department> getOneDepartmentById(@PathVariable @Min(value = 1, message = "must be greater than or equal to 1") Long id) {
         return new ResponseEntity<>(departmentService.getOneDepartmentById(id), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<HttpHeaders> createDepartment(@Valid @RequestBody Department department, UriComponentsBuilder uriComponentsBuilder) {
+        departmentService.createDepartment(department);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(uriComponentsBuilder.path("/departments/{id}").buildAndExpand(department.getId()).toUri());
+        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDepartmentById(@PathVariable @Min(value = 1, message = "must be greater than or equal to 1") Long id) {
+        departmentService.deleteDepartmentById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

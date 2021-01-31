@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -30,22 +30,32 @@ import java.util.Set;
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
     @Column(name = "name")
     @NotEmpty(message = "Department name must be not empty")
-    @Size(min = 2, max = 30, message = "Department name must be between 2 and 30 characters")
     private String name;
+
     @Column(name = "description")
     @NotEmpty(message = "Department description must be not empty")
     private String description;
+
     @Column(name = "phone_number")
     @NotEmpty(message = "Department phone number must be not empty")
     private String phoneNumber;
+
     @Column(name = "date_of_formation")
     @NotNull(message = "Date of formation must be not empty")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateOfFormation;
-    @OneToMany
-    @JoinColumn(name = "department_id", nullable = false, insertable = false, updatable = false)
-    private Set<Employee> employees;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Set<Employee> employees = new HashSet<>();
+
+    @PreRemove
+    private void deleteDepartmentFromEmployee() {
+        employees.forEach(employee -> employee.setDepartmentId(null));
+    }
 }

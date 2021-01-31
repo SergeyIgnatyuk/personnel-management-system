@@ -1,6 +1,7 @@
 package com.controller;
 
-
+import com.exceptions.ResourceNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.model.Department;
 import com.model.Employee;
 import com.service.DepartmentService;
@@ -14,14 +15,20 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,8 +90,7 @@ public class DepartmentControllerTest {
                 .andExpect(jsonPath("$[0].employees[0].phoneNumber", Matchers.is(firstEmployeeFromList.getPhoneNumber())))
                 .andExpect(jsonPath("$[0].employees[0].emailAddress", Matchers.is(firstEmployeeFromList.getEmailAddress())))
                 .andExpect(jsonPath("$[0].employees[0].position", Matchers.is(firstEmployeeFromList.getPosition())))
-                .andExpect(jsonPath("$[0].employees[0].dateOfEmployment", Matchers.is(new SimpleDateFormat("yyyy-MM-dd").format(firstEmployeeFromList.getDateOfEmployment()))))
-                .andExpect(jsonPath("$[0].employees[0].departmentId", Matchers.is(firstEmployeeFromList.getDepartmentId().intValue())));
+                .andExpect(jsonPath("$[0].employees[0].dateOfEmployment", Matchers.is(new SimpleDateFormat("yyyy-MM-dd").format(firstEmployeeFromList.getDateOfEmployment()))));
     }
 
     @Test
@@ -126,8 +132,7 @@ public class DepartmentControllerTest {
                 .andExpect(jsonPath("$.employees[0].phoneNumber", Matchers.is(firstEmployeeFromList.getPhoneNumber())))
                 .andExpect(jsonPath("$.employees[0].emailAddress", Matchers.is(firstEmployeeFromList.getEmailAddress())))
                 .andExpect(jsonPath("$.employees[0].position", Matchers.is(firstEmployeeFromList.getPosition())))
-                .andExpect(jsonPath("$.employees[0].dateOfEmployment", Matchers.is(new SimpleDateFormat("yyyy-MM-dd").format(firstEmployeeFromList.getDateOfEmployment()))))
-                .andExpect(jsonPath("$.employees[0].departmentId", Matchers.is(firstEmployeeFromList.getDepartmentId().intValue())));
+                .andExpect(jsonPath("$.employees[0].dateOfEmployment", Matchers.is(new SimpleDateFormat("yyyy-MM-dd").format(firstEmployeeFromList.getDateOfEmployment()))));
     }
 
     @Test
@@ -137,5 +142,83 @@ public class DepartmentControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", Matchers.is("Constraint Violation")))
                 .andExpect(jsonPath("$.errors[0]", Matchers.is("getOneDepartmentById.id: must be greater than or equal to 1")));
+    }
+
+    @Test
+    public void givenResourceNotFoundException_whenGetDepartmentById_thenReturnJson() throws Exception {
+        when(departmentService.getOneDepartmentById(1L)).thenThrow(new ResourceNotFoundException("Department with ID: 1 Not Found!"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/departments/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", Matchers.is("Resource Not Found")))
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("Department with ID: 1 Not Found!")));
+    }
+
+    @Test
+    public void whenCreateDepartment_thenReturnJson() throws Exception {
+        Department department = Department.builder()
+                .name("Accountant Department")
+                .description("Accountant Department")
+                .phoneNumber("111-111")
+                .dateOfFormation(new GregorianCalendar(2015, Calendar.MARCH, 15).getTime())
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/departments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(department)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void givenMethodArgumentNotValidException_whenCreateDepartment_thenReturnJson() throws Exception {
+        Department department = Department.builder()
+                .name("")
+                .description("Accountant Department")
+                .phoneNumber("111-111")
+                .dateOfFormation(new GregorianCalendar(2015, Calendar.MARCH, 15).getTime())
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/departments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(department)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("Department name must be not empty")));
+    }
+
+    @Test
+    public void whenDeleteDepartmentById_thenReturnJson() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("id", String.valueOf(1L));
+
+        mockMvc.perform(delete("/departments/1")
+                .contentType(MediaType.APPLICATION_JSON).params(params))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void givenConstraintViolationException_whenDeleteDepartmentById_thenReturnJson() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("id", String.valueOf(0L));
+
+        mockMvc.perform(delete("/departments/0")
+                .contentType(MediaType.APPLICATION_JSON).params(params))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", Matchers.is("Constraint Violation")))
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("deleteDepartmentById.id: must be greater than or equal to 1")));
+    }
+
+    @Test
+    public void givenResourceNotFoundException_whenDeleteDepartmentById_thenReturnJson() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("id", String.valueOf(1L));
+
+        doThrow(new ResourceNotFoundException("Department with ID: 1 Not Found!")).when(departmentService).deleteDepartmentById(1L);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/departments/1")
+                .contentType(MediaType.APPLICATION_JSON).params(params))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", Matchers.is("Resource Not Found")))
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("Department with ID: 1 Not Found!")));
     }
 }

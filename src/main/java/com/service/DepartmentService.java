@@ -13,5 +13,10 @@ import java.util.List;
 
 public interface DepartmentService {
     List<Department> getAllDepartmentsWithTheirEmployees();
+
     Department getOneDepartmentById(Long id);
+
+    void createDepartment(Department department);
+
+    void deleteDepartmentById(Long id);
 }

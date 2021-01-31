@@ -1,6 +1,7 @@
 package com.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,28 +30,37 @@ import java.util.Date;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
     @Column(name = "full_name")
     @NotEmpty(message = "Full name must be not empty")
     private String fullName;
+
     @Column(name = "date_of_birth")
     @NotNull(message = "Date of birth must be not empty")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateOfBirth;
+
     @Column(name = "phone_number")
     @NotEmpty(message = "Phone number must be not empty")
     private String phoneNumber;
+
     @Column(name = "email_address")
     @NotEmpty(message = "Email address must be not empty")
     private String emailAddress;
+
     @Column(name = "position")
     @NotEmpty(message = "Position must be not empty")
     @Size(min = 2, max = 30, message = "Position must be between 3 and 30 characters")
     private String position;
+
     @Column(name = "date_of_employment")
     @NotNull(message = "Date of employment must be not empty")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateOfEmployment;
+
     @Column(name = "department_id")
+    @JsonIgnore
     private Long departmentId;
 }

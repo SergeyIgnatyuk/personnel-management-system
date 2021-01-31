@@ -11,4 +11,8 @@ import com.model.Employee;
 
 public interface EmployeeService {
     Employee getOneEmployeeById(Long id);
+
+    void createEmployee(Employee employee);
+
+    void deleteEmployeeById(Long id);
 }
