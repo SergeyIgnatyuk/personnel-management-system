@@ -1,5 +1,6 @@
 package com.config;
 
+import com.model.Permission;
 import com.model.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,13 +23,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers(HttpMethod.GET, "/departments/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                .antMatchers(HttpMethod.POST, "/departments").hasRole(Role.ADMIN.name())
-                .antMatchers(HttpMethod.DELETE, "/departments/**").hasRole(Role.ADMIN.name())
-                .antMatchers(HttpMethod.GET, "/employees/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                .antMatchers(HttpMethod.POST, "/employees").hasRole(Role.ADMIN.name())
-                .antMatchers(HttpMethod.DELETE, "/employees/**").hasRole(Role.ADMIN.name())
-                .antMatchers(HttpMethod.PUT, "/employees/**").hasRole(Role.ADMIN.name())
+                .antMatchers(HttpMethod.GET, "/departments/**").hasAuthority(Permission.READ.getPermission())
+                .antMatchers(HttpMethod.POST, "/departments").hasAuthority(Permission.WRITE.getPermission())
+                .antMatchers(HttpMethod.DELETE, "/departments/**").hasRole(Permission.WRITE.getPermission())
+                .antMatchers(HttpMethod.GET, "/employees/**").hasAnyRole(Permission.READ.getPermission())
+                .antMatchers(HttpMethod.POST, "/employees").hasRole(Permission.WRITE.getPermission())
+                .antMatchers(HttpMethod.DELETE, "/employees/**").hasRole(Permission.WRITE.getPermission())
+                .antMatchers(HttpMethod.PUT, "/employees/**").hasRole(Permission.WRITE.getPermission())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -42,12 +43,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 User.builder()
                         .username("admin")
                         .password(passwordEncoder().encode("admin"))
-                        .roles(Role.ADMIN.name())
+                        .authorities(Role.ADMIN.getAuthorities())
                         .build(),
                 User.builder()
                         .username("user")
                         .password(passwordEncoder().encode("user"))
-                        .roles(Role.USER.name())
+                        .authorities(Role.USER.getAuthorities())
                         .build()
         );
     }
