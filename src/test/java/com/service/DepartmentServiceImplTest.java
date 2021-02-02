@@ -2,6 +2,7 @@ package com.service;
 
 import com.model.Department;
 import com.repository.DepartmentRepository;
+import com.repository.EmployeeRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class DepartmentServiceImplTest {
 
     @TestConfiguration
     static class DepartmentServiceImplTestContextConfiguration {
+
         @Bean
         public DepartmentRepository getDepartmentRepository() {
             return mock(DepartmentRepository.class);

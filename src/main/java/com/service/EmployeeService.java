@@ -2,6 +2,8 @@ package com.service;
 
 import com.model.Employee;
 
+import java.util.List;
+
 /**
  * Service interface for {@link com.model.Employee}
  *
@@ -15,4 +17,10 @@ public interface EmployeeService {
     void createEmployee(Employee employee);
 
     void deleteEmployeeById(Long id);
+
+    void removeEmployeeFromDepartment(Long employeeId);
+
+    void addEmployeeToDepartment(Long employeeId, Long departmentId);
+
+    List<Employee> getAllEmployeesWhichDoNotBelongToAnyDepartment();
 }

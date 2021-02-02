@@ -1,6 +1,7 @@
 package com.service;
 
 import com.model.Employee;
+import com.repository.DepartmentRepository;
 import com.repository.EmployeeRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +33,7 @@ public class EmployeeServiceImplTest {
             return mock(EmployeeRepository.class);
         }
 
+
         @Bean
         public com.service.EmployeeService getEmployeeService() {
             return new EmployeeServiceImpl(getEmployeeRepository());
@@ -56,5 +58,23 @@ public class EmployeeServiceImplTest {
     public void whenDeleteEmployee_deleteByIdShouldBeCalled() {
         employeeService.deleteEmployeeById(1L);
         verify(employeeRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void whenGetAllEmployeesWhichDoNotBelongToAnyDepartment_getEmployeesByDepartmentIdIsNullShouldBeCalled() {
+        employeeService.getAllEmployeesWhichDoNotBelongToAnyDepartment();
+        verify(employeeRepository, times(1)).getEmployeesByDepartmentIdIsNull();
+    }
+
+    @Test
+    public void whenRemoveEmployeeFromDepartment_removeEmployeeFromDepartmentShouldBeCalled() {
+        employeeService.removeEmployeeFromDepartment(1L);
+        verify(employeeRepository, times(1)).removeEmployeeFromDepartment(1L);
+    }
+
+    @Test
+    public void whenAddEmployeeToDepartment_addEmployeeToDepartmentShouldBeCalled() {
+        employeeService.addEmployeeToDepartment(1L, 1L);
+        verify(employeeRepository, times(1)).addEmployeeToDepartment(1L, 1L);
     }
 }

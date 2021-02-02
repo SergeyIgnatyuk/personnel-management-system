@@ -21,6 +21,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -45,7 +48,7 @@ public class EmployeeControllerTest {
     private EmployeeService employeeService;
 
     @Test
-    public void givenEmployee_whenGetOneEmployeeById_thenReturnJson() throws Exception {
+    public void whenGetOneEmployeeById_thenReturnJson() throws Exception {
         Employee employee = Employee.builder()
                 .id(1L)
                 .fullName("Harry Potter")
@@ -78,7 +81,7 @@ public class EmployeeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", Matchers.is("Constraint Violation")))
-                .andExpect(jsonPath("$.errors[0]", Matchers.is("getOneEmployeeById.id: must be greater than or equal to 1")));
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("getOneEmployeeById.employeeId: must be greater than or equal to 1")));
     }
 
     @Test
@@ -148,7 +151,7 @@ public class EmployeeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON).params(params))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", Matchers.is("Constraint Violation")))
-                .andExpect(jsonPath("$.errors[0]", Matchers.is("deleteEmployeeById.id: must be greater than or equal to 1")));
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("deleteEmployeeById.employeeId: must be greater than or equal to 1")));
     }
 
     @Test
@@ -163,5 +166,94 @@ public class EmployeeControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", Matchers.is("Resource Not Found")))
                 .andExpect(jsonPath("$.errors[0]", Matchers.is("Employee with ID: 1 Not Found!")));
+    }
+
+    @Test
+    public void whenGetAllEmployeesWhichDoNotBelongToAnyDepartment_thenReturnJsonArray() throws Exception {
+        List<Employee> employeeList = Stream.of(Employee.builder()
+                .id(1L)
+                .fullName("Nikolai Nikolaev")
+                .dateOfBirth(new Date())
+                .phoneNumber("111-111-111")
+                .emailAddress("nikolai@gmail.com")
+                .position("PM")
+                .dateOfEmployment(new Date())
+                .departmentId(null)
+                .build(), Employee.builder()
+                .id(2L)
+                .fullName("Sergey Sergeev")
+                .dateOfBirth(new Date())
+                .phoneNumber("222-222-222")
+                .emailAddress("signatuk89@gmail.com")
+                .position("Java Developer")
+                .dateOfEmployment(new Date())
+                .departmentId(1L)
+                .build()).collect(Collectors.toList());
+
+        Employee firstEmployeeFromList = employeeList.get(0);
+
+        when(employeeService.getAllEmployeesWhichDoNotBelongToAnyDepartment()).thenReturn(Stream.of(employeeList.get(0)).collect(Collectors.toList()));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/employees/free")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Matchers.is(firstEmployeeFromList.getId().intValue())))
+                .andExpect(jsonPath("$[0].fullName", Matchers.is(firstEmployeeFromList.getFullName())))
+                .andExpect(jsonPath("$[0].dateOfBirth", Matchers.is(new SimpleDateFormat("yyyy-MM-dd").format(firstEmployeeFromList.getDateOfBirth()))))
+                .andExpect(jsonPath("$[0].phoneNumber", Matchers.is(firstEmployeeFromList.getPhoneNumber())))
+                .andExpect(jsonPath("$[0].emailAddress", Matchers.is(firstEmployeeFromList.getEmailAddress())))
+                .andExpect(jsonPath("$[0].position", Matchers.is(firstEmployeeFromList.getPosition())))
+                .andExpect(jsonPath("$[0].dateOfEmployment", Matchers.is(new SimpleDateFormat("yyyy-MM-dd").format(firstEmployeeFromList.getDateOfEmployment()))));
+    }
+
+    @Test
+    public void whenRemoveEmployeeFromDepartment_thenReturnJson() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("employeeId", String.valueOf(1L));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/employees/1/remove/department")
+                .contentType(MediaType.APPLICATION_JSON)
+                .params(params))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void givenConstraintViolationException_whenRemoveEmployeeFromDepartment_thenReturnJson() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("employeeId", String.valueOf(0L));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/employees/0/remove/department")
+                .contentType(MediaType.APPLICATION_JSON)
+                .params(params))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", Matchers.is("Constraint Violation")))
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("removeEmployeeFromDepartment.employeeId: must be greater than or equal to 1")));
+    }
+
+    @Test
+    public void whenAddEmployeeToDepartment_thenReturnJson() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("employeeId", String.valueOf(1L));
+        params.add("departmentId", String.valueOf(1L));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/employees/1/add/department/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .params(params))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void givenConstraintViolationException_whenAddEmployeeToDepartment_thenReturnJson() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("employeeId", String.valueOf(0L));
+        params.add("departmentId", String.valueOf(0L));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/employees/0/add/department/0")
+                .contentType(MediaType.APPLICATION_JSON)
+                .params(params))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", Matchers.is("Constraint Violation")))
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("addEmployeeToDepartment.employeeId: must be greater than or equal to 1, " +
+                        "addEmployeeToDepartment.departmentId: must be greater than or equal to 1")));
+
     }
 }

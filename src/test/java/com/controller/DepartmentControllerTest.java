@@ -141,7 +141,7 @@ public class DepartmentControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", Matchers.is("Constraint Violation")))
-                .andExpect(jsonPath("$.errors[0]", Matchers.is("getOneDepartmentById.id: must be greater than or equal to 1")));
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("getOneDepartmentById.departmentId: must be greater than or equal to 1")));
     }
 
     @Test
@@ -205,7 +205,7 @@ public class DepartmentControllerTest {
                 .contentType(MediaType.APPLICATION_JSON).params(params))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", Matchers.is("Constraint Violation")))
-                .andExpect(jsonPath("$.errors[0]", Matchers.is("deleteDepartmentById.id: must be greater than or equal to 1")));
+                .andExpect(jsonPath("$.errors[0]", Matchers.is("deleteDepartmentById.departmentId: must be greater than or equal to 1")));
     }
 
     @Test

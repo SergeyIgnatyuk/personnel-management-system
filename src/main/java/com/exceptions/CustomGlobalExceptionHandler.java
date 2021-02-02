@@ -11,10 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -67,7 +64,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         body.put("status", HttpStatus.BAD_REQUEST);
         body.put("message", "Constraint Violation");
 
-        List<String> errors = Stream.of(ex.getMessage()).collect(Collectors.toList());
+        List<String> errors = Stream.of(ex.getMessage()).collect(Collectors.toCollection(LinkedList::new));
 
         body.put("errors", errors);
 

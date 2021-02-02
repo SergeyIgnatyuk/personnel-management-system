@@ -86,4 +86,47 @@ public class EmployeeRepositoryTest {
         Assert.assertEquals(3, sortedByIdDepartmentList.size());
         Assert.assertEquals(1, secondDepartmentFromList.getEmployees().size());
     }
+
+    @Test
+    @Rollback(value = true)
+    public void whenGetEmployeesByDepartmentIdIsNull_thenReturnEmployees() {
+        List<Employee> employeeList = employeeRepository.getEmployeesByDepartmentIdIsNull();
+
+        Assert.assertEquals(1, employeeList.size());
+        Assert.assertEquals("Nikolai Nikolaev", employeeList.get(0).getFullName());
+        Assert.assertEquals(new GregorianCalendar(1988, Calendar.MARCH, 20).getTime(), employeeList.get(0).getDateOfBirth());
+        Assert.assertEquals("+37529-640-04-64", employeeList.get(0).getPhoneNumber());
+        Assert.assertEquals("nikolaev@gmail.com", employeeList.get(0).getEmailAddress());
+        Assert.assertEquals("Project Manager", employeeList.get(0).getPosition());
+    }
+
+    @Test
+    @Rollback(value = true)
+    public void removeEmployeeFromDepartmentTest() {
+        employeeRepository.removeEmployeeFromDepartment(1L);
+        Employee employee = employeeRepository.findById(1L).get();
+
+        Assert.assertEquals(1, employee.getId().intValue());
+        Assert.assertEquals("Sergey Sergeev", employee.getFullName());
+        Assert.assertEquals(new GregorianCalendar(1989, Calendar.AUGUST, 7).getTime(), employee.getDateOfBirth());
+        Assert.assertEquals("+37529-532-65-31", employee.getPhoneNumber());
+        Assert.assertEquals("signatuk89@gmail.com", employee.getEmailAddress());
+        Assert.assertEquals("Java Developer", employee.getPosition());
+        Assert.assertEquals(new GregorianCalendar(2016, Calendar.OCTOBER, 14).getTime(), employee.getDateOfEmployment());
+        Assert.assertNull(employee.getDepartmentId());
+    }
+
+    @Test
+    @Rollback(value = true)
+    public void addEmployeeToDepartmentTest() {
+        employeeRepository.addEmployeeToDepartment(4L, 1L);
+        Employee employee = employeeRepository.findById(4L).get();
+
+        Assert.assertEquals("Nikolai Nikolaev", employee.getFullName());
+        Assert.assertEquals(new GregorianCalendar(1988, Calendar.MARCH, 20).getTime(), employee.getDateOfBirth());
+        Assert.assertEquals("+37529-640-04-64", employee.getPhoneNumber());
+        Assert.assertEquals("nikolaev@gmail.com", employee.getEmailAddress());
+        Assert.assertEquals("Project Manager", employee.getPosition());
+        Assert.assertEquals(1, employee.getDepartmentId().intValue());
+    }
 }

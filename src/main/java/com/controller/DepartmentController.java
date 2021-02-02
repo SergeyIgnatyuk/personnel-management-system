@@ -1,9 +1,9 @@
 package com.controller;
 
 import com.model.Department;
+import com.model.Employee;
 import com.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +38,9 @@ public class DepartmentController {
         return new ResponseEntity<>(departmentService.getAllDepartmentsWithTheirEmployees(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Department> getOneDepartmentById(@PathVariable @Min(value = 1, message = "must be greater than or equal to 1") Long id) {
-        return new ResponseEntity<>(departmentService.getOneDepartmentById(id), HttpStatus.OK);
+    @GetMapping("/{departmentId}")
+    public ResponseEntity<Department> getOneDepartmentById(@PathVariable @Min(value = 1, message = "must be greater than or equal to 1") Long departmentId) {
+        return new ResponseEntity<>(departmentService.getOneDepartmentById(departmentId), HttpStatus.OK);
     }
 
     @PostMapping
@@ -51,9 +51,10 @@ public class DepartmentController {
         return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDepartmentById(@PathVariable @Min(value = 1, message = "must be greater than or equal to 1") Long id) {
-        departmentService.deleteDepartmentById(id);
+    @DeleteMapping("/{departmentId}")
+    public ResponseEntity<Void> deleteDepartmentById(@PathVariable @Min(value = 1, message = "must be greater than or equal to 1") Long departmentId) {
+        departmentService.deleteDepartmentById(departmentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }
