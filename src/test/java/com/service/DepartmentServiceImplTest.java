@@ -2,7 +2,6 @@ package com.service;
 
 import com.model.Department;
 import com.repository.DepartmentRepository;
-import com.repository.EmployeeRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +32,13 @@ public class DepartmentServiceImplTest {
     static class DepartmentServiceImplTestContextConfiguration {
 
         @Bean
-        public DepartmentRepository getDepartmentRepository() {
+        protected DepartmentRepository departmentRepository() {
             return mock(DepartmentRepository.class);
         }
 
         @Bean
-        public DepartmentService getDepartmentService() {
-            return new DepartmentServiceImpl(getDepartmentRepository());
+        protected DepartmentService departmentService() {
+            return new DepartmentServiceImpl(departmentRepository());
         }
     }
 

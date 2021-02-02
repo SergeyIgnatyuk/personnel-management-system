@@ -1,7 +1,6 @@
 package com.service;
 
 import com.model.Employee;
-import com.repository.DepartmentRepository;
 import com.repository.EmployeeRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,14 +28,14 @@ public class EmployeeServiceImplTest {
     @TestConfiguration
     static class EmployeeServiceImplTestContextConfiguration {
         @Bean
-        public EmployeeRepository getEmployeeRepository() {
+        protected EmployeeRepository employeeRepository() {
             return mock(EmployeeRepository.class);
         }
 
 
         @Bean
-        public com.service.EmployeeService getEmployeeService() {
-            return new EmployeeServiceImpl(getEmployeeRepository());
+        protected com.service.EmployeeService employeeService() {
+            return new EmployeeServiceImpl(employeeRepository());
         }
     }
 
