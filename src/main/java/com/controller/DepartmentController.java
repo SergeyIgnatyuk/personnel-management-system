@@ -1,8 +1,11 @@
 package com.controller;
 
 import com.model.Department;
-import com.model.Employee;
 import com.service.DepartmentService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/departments")
 @Validated
+@Api(value="management system", tags="Operations on departments")
 public class DepartmentController {
     private final DepartmentService departmentService;
 
@@ -34,16 +38,38 @@ public class DepartmentController {
     }
 
     @GetMapping
+    @ApiOperation(value = "View a list of departments with their employees")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved list"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<List<Department>> getAllDepartmentsWithTheirEmployees() {
         return new ResponseEntity<>(departmentService.getAllDepartmentsWithTheirEmployees(), HttpStatus.OK);
     }
 
     @GetMapping("/{departmentId}")
+    @ApiOperation(value = "View one department by ID with their employees")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved department"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<Department> getOneDepartmentById(@PathVariable @Min(value = 1, message = "must be greater than or equal to 1") Long departmentId) {
         return new ResponseEntity<>(departmentService.getOneDepartmentById(departmentId), HttpStatus.OK);
     }
 
     @PostMapping
+    @ApiOperation(value = "Create new department without employees")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully created department"),
+            @ApiResponse(code = 201, message = "Successfully created department"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<HttpHeaders> createDepartment(@Valid @RequestBody Department department, UriComponentsBuilder uriComponentsBuilder) {
         departmentService.createDepartment(department);
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -52,6 +78,14 @@ public class DepartmentController {
     }
 
     @DeleteMapping("/{departmentId}")
+    @ApiOperation(value = "Delete department by ID, and their employees will be not belong to any department")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted department"),
+            @ApiResponse(code = 204, message = "Successfully deleted department"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<Void> deleteDepartmentById(@PathVariable @Min(value = 1, message = "must be greater than or equal to 1") Long departmentId) {
         departmentService.deleteDepartmentById(departmentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
