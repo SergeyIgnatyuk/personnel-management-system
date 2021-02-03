@@ -4,6 +4,7 @@ import com.exceptions.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.model.Department;
 import com.model.Employee;
+import com.rest.DepartmentController;
 import com.service.DepartmentService;
 import org.hamcrest.Matchers;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.controller;
+package com.rest;
 
 import com.model.Department;
 import com.service.DepartmentService;
