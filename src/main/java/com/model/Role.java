@@ -10,6 +10,7 @@ public enum Role {
     ADMIN(Stream.of(Permission.DEPARTMENTS_WRITE, Permission.DEPARTMENTS_READ,
             Permission.EMPLOYEES_READ, Permission.EMPLOYEES_WRITE).collect(Collectors.toSet())),
     USER(Stream.of(Permission.DEPARTMENTS_READ, Permission.EMPLOYEES_READ).collect(Collectors.toSet()));
+
     private final Set<Permission> permissions;
 
     Role(Set<Permission> permissions) {

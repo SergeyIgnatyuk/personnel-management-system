@@ -30,19 +30,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic();
     }
 
+    @Bean
     @Override
     protected UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager(
                 User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("admin"))
-                .authorities(Role.ADMIN.getAuthorities())
-                .build(),
+                        .username("admin")
+                        .password(passwordEncoder().encode("admin"))
+                        .authorities(Role.ADMIN.getAuthorities())
+                        .build(),
                 User.builder()
-                .username("user")
-                .password("user")
-                .authorities(Role.USER.getAuthorities())
-                .build()
+                        .username("user")
+                        .password(passwordEncoder().encode("user"))
+                        .authorities(Role.USER.getAuthorities())
+                        .build()
         );
     }
 
