@@ -70,7 +70,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         body.put("status", HttpStatus.BAD_REQUEST);
         body.put("message", "Constraint Violation");
 
-        List<String> errors = Stream.of(ex.getMessage()).collect(Collectors.toCollection(LinkedList::new));
+        List<String> errors = Stream.of(ex.getMessage()).collect(Collectors.toList());
 
         body.put("errors", errors);
 

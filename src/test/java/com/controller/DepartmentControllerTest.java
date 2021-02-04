@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -48,6 +49,7 @@ public class DepartmentControllerTest {
     @MockBean
     private DepartmentService departmentService;
 
+    @WithMockUser(authorities = "departments:read")
     @Test
     public void givenDepartments_whenGetAllDepartmentsWithTheirEmployees_thenReturnJsonArray() throws Exception {
         Department departmentWithOneEmployee = Department.builder()
@@ -94,6 +96,7 @@ public class DepartmentControllerTest {
                 .andExpect(jsonPath("$[0].employees[0].dateOfEmployment", Matchers.is(new SimpleDateFormat("yyyy-MM-dd").format(firstEmployeeFromList.getDateOfEmployment()))));
     }
 
+    @WithMockUser(authorities = "departments:read")
     @Test
     public void givenDepartment_whenGetOneDepartmentById_thenReturnJson() throws Exception {
         Department departmentWithOneEmployee = Department.builder()
@@ -136,6 +139,7 @@ public class DepartmentControllerTest {
                 .andExpect(jsonPath("$.employees[0].dateOfEmployment", Matchers.is(new SimpleDateFormat("yyyy-MM-dd").format(firstEmployeeFromList.getDateOfEmployment()))));
     }
 
+    @WithMockUser(authorities = "departments:read")
     @Test
     public void givenConstraintViolationException_whenGetOneDepartmentById_thenReturnJson() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/departments/0")
@@ -145,6 +149,7 @@ public class DepartmentControllerTest {
                 .andExpect(jsonPath("$.errors[0]", Matchers.is("getOneDepartmentById.departmentId: must be greater than or equal to 1")));
     }
 
+    @WithMockUser(authorities = "departments:read")
     @Test
     public void givenResourceNotFoundException_whenGetDepartmentById_thenReturnJson() throws Exception {
         when(departmentService.getOneDepartmentById(1L)).thenThrow(new ResourceNotFoundException("Department with ID: 1 Not Found!"));
@@ -156,6 +161,7 @@ public class DepartmentControllerTest {
                 .andExpect(jsonPath("$.errors[0]", Matchers.is("Department with ID: 1 Not Found!")));
     }
 
+    @WithMockUser(authorities = "departments:write")
     @Test
     public void whenCreateDepartment_thenReturnJson() throws Exception {
         Department department = Department.builder()
@@ -171,6 +177,7 @@ public class DepartmentControllerTest {
                 .andExpect(status().isCreated());
     }
 
+    @WithMockUser(authorities = "departments:write")
     @Test
     public void givenMethodArgumentNotValidException_whenCreateDepartment_thenReturnJson() throws Exception {
         Department department = Department.builder()
@@ -187,6 +194,7 @@ public class DepartmentControllerTest {
                 .andExpect(jsonPath("$.errors[0]", Matchers.is("Department name must be not empty")));
     }
 
+    @WithMockUser(authorities = "departments:write")
     @Test
     public void whenDeleteDepartmentById_thenReturnJson() throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -197,6 +205,7 @@ public class DepartmentControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    @WithMockUser(authorities = "departments:write")
     @Test
     public void givenConstraintViolationException_whenDeleteDepartmentById_thenReturnJson() throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -209,6 +218,7 @@ public class DepartmentControllerTest {
                 .andExpect(jsonPath("$.errors[0]", Matchers.is("deleteDepartmentById.departmentId: must be greater than or equal to 1")));
     }
 
+    @WithMockUser(authorities = "departments:write")
     @Test
     public void givenResourceNotFoundException_whenDeleteDepartmentById_thenReturnJson() throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
