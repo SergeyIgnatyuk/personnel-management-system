@@ -4,7 +4,7 @@ import com.model.Role;
 import com.model.Status;
 import com.model.User;
 import org.junit.Assert;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,14 +20,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-class UserRepositoryTest {
+public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
 
     @Test
     @Rollback(value = true)
-    void whenFindByEmail_thenReturnUser() {
+    public void whenFindByEmail_thenReturnUser() {
         User user = userRepository.findByEmail("sergeev89@gmail.com").get();
 
         Assert.assertEquals(1, user.getId().intValue());

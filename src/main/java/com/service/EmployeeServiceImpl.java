@@ -20,7 +20,9 @@ import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeServiceImpl.class);
+
     private final EmployeeRepository employeeRepository;
 
     @Autowired

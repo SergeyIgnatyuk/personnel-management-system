@@ -31,6 +31,7 @@ import java.util.List;
 @Validated
 @Api(value="management system", tags="Operations on departments")
 public class DepartmentController {
+
     private final DepartmentService departmentService;
 
     @Autowired

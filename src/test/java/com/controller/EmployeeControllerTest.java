@@ -3,15 +3,20 @@ package com.controller;
 import com.exceptions.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.model.Employee;
+import com.repository.UserRepository;
 import com.rest.EmployeeController;
+import com.security.UserDetailsServiceImpl;
 import com.service.EmployeeService;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,8 +32,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,6 +52,20 @@ public class EmployeeControllerTest {
 
     @MockBean
     private EmployeeService employeeService;
+
+    @TestConfiguration
+    static class EmployeeControllerTestConfig {
+        @Bean
+        protected UserRepository userRepository() {
+            return mock(UserRepository.class);
+        }
+
+
+        @Bean("userDetailsServiceImpl")
+        protected UserDetailsService userDetailsService() {
+            return new UserDetailsServiceImpl(userRepository());
+        }
+    }
 
     @WithMockUser(authorities = "employees:read")
     @Test

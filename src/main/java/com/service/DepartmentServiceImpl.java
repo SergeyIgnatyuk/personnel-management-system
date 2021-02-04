@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DepartmentServiceImpl.class);
+
     private final DepartmentRepository departmentRepository;
 
     @Autowired
