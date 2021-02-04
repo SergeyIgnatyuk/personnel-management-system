@@ -31,7 +31,6 @@ import java.util.Date;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     @ApiModelProperty(notes = "The database generated employee ID")
     private Long id;
 

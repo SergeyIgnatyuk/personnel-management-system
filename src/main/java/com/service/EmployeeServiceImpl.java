@@ -32,7 +32,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public Employee getOneEmployeeById(Long id) {
         LOGGER.debug("Trying to find a employee with ID = {}", id);
-        return employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee with ID: " + id + " Not Found!")) ;
+        return employeeRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Employee with ID: " + id + " Not Found!")) ;
     }
 
     @Override

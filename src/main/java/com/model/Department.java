@@ -31,7 +31,6 @@ import java.util.Set;
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     @ApiModelProperty(notes = "The database generated department ID")
     private Long id;
 

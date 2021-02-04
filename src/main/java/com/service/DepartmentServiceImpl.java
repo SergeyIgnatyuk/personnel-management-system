@@ -40,7 +40,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Transactional
     public Department getOneDepartmentById(Long id) {
         LOGGER.debug("Trying to find a department with ID = {}", id);
-        return departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department with ID: " + id + " Not Found!")) ;
+        return departmentRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Department with ID: " + id + " Not Found!")) ;
     }
 
     @Override
