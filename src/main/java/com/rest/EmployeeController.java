@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -39,6 +40,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{employeeId}")
+    @PreAuthorize("hasAuthority('employees:read')")
     @ApiOperation(value = "View one employee by ID without department")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved employee"),
@@ -51,6 +53,7 @@ public class EmployeeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('employees:write')")
     @ApiOperation(value = "Create new employee which do not belong to any department")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully created employee"),
@@ -67,6 +70,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{employeeId}")
+    @PreAuthorize("hasAuthority('employees:write')")
     @ApiOperation(value = "Delete employee by ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted employee"),
@@ -81,6 +85,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/free")
+    @PreAuthorize("hasAuthority('employees:read')")
     @ApiOperation(value = "View all employees which do not belong to any department")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved list"),
@@ -93,6 +98,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}/remove/department")
+    @PreAuthorize("hasAuthority('employees:write')")
     @ApiOperation(value = "Get employee by ID and remove him from department")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully removed employee from department"),
@@ -106,6 +112,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}/add/department/{departmentId}")
+    @PreAuthorize("hasAuthority('employees:write')")
     @ApiOperation(value = "Get employee by ID and add him to department")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added employee to department"),

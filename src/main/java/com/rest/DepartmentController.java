@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -38,6 +39,7 @@ public class DepartmentController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('departments:read')")
     @ApiOperation(value = "View a list of departments with their employees")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved list"),
@@ -50,6 +52,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/{departmentId}")
+    @PreAuthorize("hasAuthority('departments:read')")
     @ApiOperation(value = "View one department by ID with their employees")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved department"),
@@ -62,6 +65,7 @@ public class DepartmentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('departments:write')")
     @ApiOperation(value = "Create new department without employees")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully created department"),
@@ -78,6 +82,7 @@ public class DepartmentController {
     }
 
     @DeleteMapping("/{departmentId}")
+    @PreAuthorize("hasAuthority('departments:write')")
     @ApiOperation(value = "Delete department by ID, and their employees will be not belong to any department")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted department"),
