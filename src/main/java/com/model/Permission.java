@@ -1,5 +1,13 @@
 package com.model;
 
+/**
+ * Enum for {@link com.model.Role} permissions.
+ *
+ *
+ * @author Sergey Ignatyuk
+ * @version 1.0
+ */
+
 public enum Permission {
     DEPARTMENTS_READ("departments:read"),
     DEPARTMENTS_WRITE("departments:write"),

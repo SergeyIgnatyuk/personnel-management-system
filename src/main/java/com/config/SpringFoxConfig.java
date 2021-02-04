@@ -12,6 +12,14 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
+/**
+ * Swagger Configuration.
+ *
+ *
+ * @author Sergey Ignatyuk
+ * @version 1.0
+ */
+
 @Configuration
 @Import({BeanValidatorPluginsConfiguration.class})
 public class SpringFoxConfig {

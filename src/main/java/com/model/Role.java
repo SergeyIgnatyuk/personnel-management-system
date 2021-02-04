@@ -6,6 +6,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Enum for {@link com.model.User} role with permissions.
+ *
+ *
+ * @author Sergey Ignatyuk
+ * @version 1.0
+ */
+
 public enum Role {
     ADMIN(Stream.of(Permission.DEPARTMENTS_WRITE, Permission.DEPARTMENTS_READ,
             Permission.EMPLOYEES_READ, Permission.EMPLOYEES_WRITE).collect(Collectors.toSet())),

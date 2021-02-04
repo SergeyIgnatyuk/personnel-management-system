@@ -28,6 +28,7 @@ public class EmployeeRepositoryTest {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
     @Autowired
     private DepartmentRepository departmentRepository;
 

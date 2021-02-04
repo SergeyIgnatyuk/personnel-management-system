@@ -20,8 +20,10 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class EmployeeServiceImplTest {
+
     @Autowired
     private EmployeeRepository employeeRepository;
+
     @Autowired
     private com.service.EmployeeService employeeService;
 

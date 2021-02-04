@@ -10,6 +10,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Simple JavaBean domain object that represents a SecurityUser is build with {@link lombok}.
+ * That object make {@link org.springframework.security.core.userdetails.User} from {@link User}
+ *
+ * @author Sergey Ignatyuk
+ * @version 1.0
+ */
+
 @Data
 public class SecurityUser implements UserDetails {
 
@@ -60,7 +68,7 @@ public class SecurityUser implements UserDetails {
         return isActive;
     }
 
-    public static UserDetails fromUser(User user) {
+    static UserDetails fromUser(User user) {
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),

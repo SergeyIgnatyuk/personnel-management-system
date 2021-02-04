@@ -22,8 +22,10 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class DepartmentServiceImplTest {
+
     @Autowired
     private DepartmentRepository departmentRepository;
+
     @Autowired
     private DepartmentService departmentService;
 
